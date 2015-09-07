@@ -1,4 +1,5 @@
 #!/bin/bash
+ROOT_DIR="/usr/share/nginx/www"
 
 if ! [[ $1 ]]
 then
@@ -39,21 +40,21 @@ fi
 
 
 # cleanup html folder
-echo "deleting files from /var/www/html/"
-rm -R /var/www/html/*
+echo "deleting files from $ROOT_DIR/"
+rm -R "$ROOT_DIR"/*
 
 # restore files
-echo "restoring files from $FILES_ARCHIVE to /var/www/html"
-tar -xzf $FILES_ARCHIVE --directory="/var/www/html/"
+echo "restoring files from $FILES_ARCHIVE to $ROOT_DIR"
+tar -xzf $FILES_ARCHIVE --directory="$ROOT_DIR/"
 
 # update wp-config.php
-sed -i s/"define('DB_NAME', '.*');"/"define('DB_NAME', '$MYSQL_ENV_MYSQL_DATABASE');"/g /var/www/html/wp-config.php
-sed -i s/"define('DB_USER', '.*');"/"define('DB_USER', '$MYSQL_ENV_MYSQL_USER');"/g /var/www/html/wp-config.php
-sed -i s/"define('DB_PASSWORD', '.*');"/"define('DB_PASSWORD', '$MYSQL_ENV_MYSQL_PASSWORD');"/g /var/www/html/wp-config.php
-sed -i s/"define('DB_HOST', '.*');"/"define('DB_HOST', 'mysql:$MYSQL_PORT_3306_TCP_PORT');"/g /var/www/html/wp-config.php
+sed -i s/"define('DB_NAME', '.*');"/"define('DB_NAME', '$MYSQL_ENV_MYSQL_DATABASE');"/g "$ROOT_DIR"/wp-config.php
+sed -i s/"define('DB_USER', '.*');"/"define('DB_USER', '$MYSQL_ENV_MYSQL_USER');"/g "$ROOT_DIR"/wp-config.php
+sed -i s/"define('DB_PASSWORD', '.*');"/"define('DB_PASSWORD', '$MYSQL_ENV_MYSQL_PASSWORD');"/g "$ROOT_DIR"/wp-config.php
+sed -i s/"define('DB_HOST', '.*');"/"define('DB_HOST', 'mysql:$MYSQL_PORT_3306_TCP_PORT');"/g "$ROOT_DIR"/wp-config.php
 
 # set correct file owner
-chown -R www-data:www-data /var/www/html
+chown -R www-data:www-data "$ROOT_DIR"
 
 # restore database
 echo "restoring data from mysql dump file $SQL_ARCHIVE"
